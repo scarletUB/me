@@ -3,15 +3,24 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title></title>
+  <title>Profile</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
 
   <style>
+    :root {
+      --glass:     rgba(18, 16, 38, 0.38);
+      --glass-bd:  rgba(140, 130, 220, 0.22);
+      --text-main: rgba(245, 245, 255, 0.92);
+      --text-dim:  rgba(200, 195, 240, 0.78);
+      --accent:    rgba(160, 140, 255, 0.7);
+      --accent-glow:rgba(140, 120, 240, 0.35);
+    }
+
     body {
       font-family: 'Inter', system-ui, sans-serif;
-      background-color: #05040f;
+      background-color: #05040f;                    /* запасной цвет, если фон не загрузится */
       background-image: var(--body-bg-image, none);
       background-position: center;
       background-size: cover;
@@ -23,20 +32,25 @@
       overflow-x: hidden;
     }
 
-    :root {
-      --text-main:      rgba(245, 245, 255, 0.92);
-      --text-dim:       rgba(200, 195, 240, 0.78);
-      --glass:          var(--config-glass, rgba(18, 16, 38, 0.38));
-      --glass-border:   var(--config-glass-border, rgba(140, 130, 220, 0.22));
-      --verified-icon:  var(--config-verified-icon, #a08cff);
+    .grid-bg {
+      position: fixed;
+      inset: 0;
+      background: 
+        radial-gradient(circle at 20% 30%, rgba(100,80,200,0.06) 0%, transparent 40%),
+        radial-gradient(circle at 80% 70%, rgba(140,120,240,0.05) 0%, transparent 45%);
+      pointer-events: none;
+      z-index: -2;
     }
 
     .glass {
       background: var(--glass);
       backdrop-filter: blur(16px) saturate(180%);
-      border: 1px solid var(--glass-border);
+      -webkit-backdrop-filter: blur(16px) saturate(180%);
+      border: 1px solid var(--glass-bd);
       border-radius: 20px;
-      box-shadow: 0 8px 32px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.04);
+      box-shadow: 
+        0 8px 32px rgba(0,0,0,0.45),
+        inset 0 1px 0 rgba(255,255,255,0.04);
     }
 
     .profile-header {
@@ -49,6 +63,13 @@
       border-radius: 0 0 36px 36px;
     }
 
+    .avatar-wrapper {
+      position: relative;
+      z-index: 2;
+      margin-top: -110px;
+      margin-bottom: 24px;
+    }
+
     .avatar {
       width: 168px;
       height: 168px;
@@ -56,20 +77,20 @@
       border-radius: 50%;
       border: 5px solid rgba(12,10,35,0.85);
       box-shadow: 0 0 40px rgba(0,0,0,0.6), inset 0 2px 8px rgba(255,255,255,0.05);
-      animation: neonPulse 5s ease-in-out infinite alternate;
-    }
-
-    @keyframes neonPulse {
-      0%   { box-shadow: 0 0 40px rgba(0,0,0,0.6), 0 0 0 4px rgba(160,140,255,0.15); }
-      50%  { box-shadow: 0 0 40px rgba(0,0,0,0.6), 0 0 30px 10px rgba(160,140,255,0.45); }
-      100% { box-shadow: 0 0 40px rgba(0,0,0,0.6), 0 0 15px 6px rgba(160,140,255,0.7); }
+      background: #0f0d22;
     }
 
     .title {
       font-family: 'Orbitron', monospace;
       font-size: 2.8rem;
       letter-spacing: 2px;
-      text-shadow: 0 0 20px rgba(140,120,240,0.5);
+      text-shadow: 0 0 20px var(--accent-glow);
+    }
+
+    .status-text {
+      font-size: 1.25rem;
+      color: var(--text-dim);
+      font-weight: 400;
     }
 
     .hashtag-capsule, .link-capsule {
@@ -79,9 +100,10 @@
       padding: 5px 14px;
       margin: 4px 5px;
       background: rgba(60, 50, 140, 0.25);
-      border: 1px solid var(--glass-border);
+      border: 1px solid rgba(140, 130, 220, 0.3);
       border-radius: 9999px;
       color: rgba(210, 200, 255, 0.88);
+      font-weight: 450;
       backdrop-filter: blur(10px);
       transition: all 0.28s ease;
       text-decoration: none;
@@ -89,56 +111,58 @@
 
     .hashtag-capsule:hover, .link-capsule:hover {
       background: rgba(90, 80, 180, 0.4);
-      border-color: var(--verified-icon);
+      border-color: var(--accent);
       color: white;
       transform: translateY(-1px) scale(1.03);
+      box-shadow: 0 6px 20px rgba(140,120,240,0.3);
     }
 
     .footer {
       background: var(--glass);
-      border-top: 1px solid var(--glass-border);
+      border-top: 1px solid var(--glass-bd);
       backdrop-filter: blur(20px);
       padding: 1.5rem 0;
       margin-top: 4rem;
+    }
+
+    .footer a {
+      color: rgba(200, 190, 240, 0.8);
+      transition: color 0.25s;
+    }
+
+    .footer a:hover {
+      color: rgba(220, 210, 255, 1);
     }
 
     #toast {
       position: fixed;
       bottom: 32px;
       left: 50%;
-      transform: translateX(-50%) translateY(30px);
-      background: rgba(25, 20, 55, 0.85);
-      backdrop-filter: blur(20px);
-      border: 1px solid var(--glass-border);
-      color: white;
+      transform: translateX(-50%);
+      background: rgba(30, 25, 60, 0.92);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(140, 130, 220, 0.4);
+      color: rgba(220, 210, 255, 0.95);
       padding: 14px 28px;
       border-radius: 16px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.6);
       z-index: 1000;
       opacity: 0;
+      transition: all 0.4s ease;
       pointer-events: none;
-      transition: opacity 0.4s ease, transform 0.4s ease;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      max-width: 90vw;
+      font-size: 1rem;
     }
 
-    #toast.visible {
+    #toast.show {
       opacity: 1;
       transform: translateX(-50%) translateY(-8px);
-    }
-
-    #toast i {
-      width: 22px;
-      height: 22px;
-      color: var(--verified-icon);
     }
   </style>
 </head>
 <body>
 
 <div class="grid-bg"></div>
+
 <div id="toast"></div>
 
 <div class="relative z-10 min-h-screen flex flex-col">
@@ -158,15 +182,15 @@
     </div>
 
     <div class="glass p-7 mb-8">
-      <h2 class="text-xl font-medium mb-4 flex items-center gap-2" style="color: var(--text-dim);">
+      <h2 class="text-xl font-medium mb-4 flex items-center gap-2 text-[rgba(220,210,255,0.9)]">
         <i data-lucide="user" class="w-5 h-5"></i>
         О себе
       </h2>
-      <div id="bioEl" class="leading-relaxed text-[1.05rem]"></div>
+      <div id="bioEl" class="text-[rgba(210,200,255,0.88)] leading-relaxed text-[1.05rem]"></div>
     </div>
 
     <div class="glass p-7 mb-12">
-      <h2 class="text-xl font-medium mb-5 flex items-center gap-2" style="color: var(--text-dim);">
+      <h2 class="text-xl font-medium mb-5 flex items-center gap-2 text-[rgba(220,210,255,0.9)]">
         <i data-lucide="link" class="w-5 h-5"></i>
         Связь
       </h2>
@@ -189,21 +213,20 @@
 <script>
 // ─── КОНФИГ ────────────────────────────────────────────────
 const config = {
-  title:              "SCARLET_USER | Premium Developer",
-  username:           "SCARLET_USER",
-  status:             "Разработчик ботов и интерфейсов • Python • Telegram • Web3 #Python #BotDev",
-  bio:                `Привет. Пишу ботов, сайты, интеграции.\nЛюблю чистый код и тёмный режим.\n\nTG: @hubsscarlet\nGitHub: github.com/scarlet-dev\nПоддержка: @scarlet_support`,
-  avatar:             "https://media3.giphy.com/media/v1.Y2lkPTc5MGI3NjExYjFuMmZ2eWhpY3N3NXA5aDVpeDJ6aGJzOTlncHFjYnU1NHBzMnhlNyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/4ilFRqgbzbx4c/giphy.gif",
-  header:             "https://media3.giphy.com/media/v1.Y2lkPTc5MGI3NjExajNseml1anhyemtkNDE2Z29lbWQxN2JhM2ZiaTB3cGFrZ2lxdWVyaCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/FeVg8ViEczcxG/giphy.gif",
-  background:         "https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExczd2OXh5Z3RhN2pxcHFiNW03NHBiNHZmc2hycWhzaTNmdnozMXFyeCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/aRZ4vTsHnyW6A/giphy.gif",
+  username: "SCARLET_USER",
+  status: "Разработчик ботов и интерфейсов • Python • Telegram • Web3 #Python #Developer #Scarlet #Osint #",
+  bio: `Привет. Пишу ботов, сайты, интеграции.\nЛюблю чистый код и тёмный режим.\n\nTG: @hubsscarlet\nGitHub: github.com/scarlet-dev\nПоддержка: @scarlet_support`,
+  avatar: "https://media3.giphy.com/media/v1.Y2lkPTc5MGI3NjExYjFuMmZ2eWhpY3N3NXA5aDVpeDJ6aGJzOTlncHFjYnU1NHBzMnhlNyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/4ilFRqgbzbx4c/giphy.gif",
+  header: "https://media3.giphy.com/media/v1.Y2lkPTc5MGI3NjExajNseml1anhyemtkNDE2Z29lbWQxN2JhM2ZiaTB3cGFrZ2lxdWVyaCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/FeVg8ViEczcxG/giphy.gif",
+  
+  // Фон сайта — здесь всё работает: gif, картинка, градиент, цвет
+  background: "https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExczd2OXh5Z3RhN2pxcHFiNW03NHBiNHZmc2hycWhzaTNmdnozMXFyeCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/aRZ4vTsHnyW6A/giphy.gif",
+  // background: "#0a0015",
+  // background: "linear-gradient(135deg, #0a0015, #1a0033)",
+  // background: "url('local-image.jpg') center/cover",
 
-  // Новые настраиваемые цвета
-  glassBg:            "rgba(18, 16, 38, 0.38)",          // фон стеклянных блоков
-  glassBorder:        "rgba(140, 130, 220, 0.35)",       // граница стекла и toast
-  verifiedIconColor:  "#a08cff",                         // цвет иконки галочки (верификация)
-
-  verified:           true,
-  verifiedMessage:    "Верифицированный пользователь SCARLET\nПользователь является разработчиком.",
+  verified: true,
+  verifiedMessage: "Разработчик Scarlet",
 
   socialLinks: [
     { text: "Telegram", url: "https://t.me/hubsscarlet", icon: "send" },
@@ -212,17 +235,14 @@ const config = {
   ]
 };
 
-// ─── Применение цветов из конфига ──────────────────────────
-document.documentElement.style.setProperty('--config-glass', config.glassBg);
-document.documentElement.style.setProperty('--config-glass-border', config.glassBorder);
-document.documentElement.style.setProperty('--config-verified-icon', config.verifiedIconColor);
-
-// ─── Применение остальных настроек ─────────────────────────
-document.title = config.title;
+// ─── Применение настроек ────────────────────────────────────
 document.body.style.setProperty('--body-bg-image', `url('${config.background}')`);
+
 document.getElementById("headerBg").style.backgroundImage = 
   `linear-gradient(to bottom, rgba(10,8,30,0.4), rgba(5,4,15,0.85)), url('${config.header}')`;
+
 document.getElementById("avatarImg").src = config.avatar;
+
 document.getElementById("usernameEl").textContent = config.username;
 
 // Статус + хештеги
@@ -240,7 +260,7 @@ hashtags.forEach(tag => {
   hashtagsDiv.appendChild(span);
 });
 
-// Био
+// Био с капсулами
 let bioHtml = config.bio
   .replace(/\n/g, '<br>')
   .replace(/(https?:\/\/[^\s<]+)/g, '<a href="$1" class="link-capsule" target="_blank">$1</a>')
@@ -261,34 +281,18 @@ config.socialLinks.forEach(link => {
   linksDiv.appendChild(a);
 });
 
-// Верификация + уведомление (исчезает через 2 секунды)
+// Верификация + уведомление
 if (config.verified) {
   const badge = document.createElement("span");
-  badge.innerHTML = ` <i data-lucide="check-circle" class="inline w-5 h-5 cursor-pointer" style="color: ${config.verifiedIconColor};"></i>`;
+  badge.innerHTML = ' <i data-lucide="check-circle" class="inline w-5 h-5 text-[rgba(140,120,240,0.9)] cursor-pointer"></i>';
   badge.style.cursor = "pointer";
   badge.title = "Нажми, чтобы показать статус верификации";
 
-  let hideTimer = null;
-
   badge.addEventListener("click", () => {
     const toast = document.getElementById("toast");
-
-    if (hideTimer) clearTimeout(hideTimer);
-
-    toast.innerHTML = `
-      <i data-lucide="check-circle"></i>
-      <span>${config.verifiedMessage}</span>
-    `;
-
-    toast.classList.add("visible");
-    lucide.createIcons({ icons: toast });
-
-    hideTimer = setTimeout(() => {
-      toast.classList.remove("visible");
-      setTimeout(() => {
-        toast.innerHTML = "";
-      }, 450);
-    }, 2000); // ← 2 секунды
+    toast.textContent = config.verifiedMessage;
+    toast.classList.add("show");
+    setTimeout(() => toast.classList.remove("show"), 4200);
   });
 
   document.getElementById("usernameEl").appendChild(badge);
